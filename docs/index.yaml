@@ -17,7 +17,6 @@ entries:
     created: "2022-06-03T19:49:59.644045+05:30"
     description: A Helm chart for FID Kubernetes deployment
     digest: b8b616e8945763df5e0c379abf6092d0d4dd68466af3488e53d13dc7413d9c9f
-    home: https://github.com/Divyeshzb/radianthelmtest
     name: fid
     type: application
     urls:
@@ -28,7 +27,6 @@ entries:
     created: "2022-06-03T19:49:59.643002+05:30"
     description: A Helm chart for FID Kubernetes deployment
     digest: 63e5b648694dec7f02d005b793e0c81d59312e46e4f80f085f30c932da735c2d
-    home: https://github.com/radiantlogic-devops/helm
     name: fid
     type: application
     urls:
@@ -39,7 +37,6 @@ entries:
     created: "2022-06-03T19:49:59.641864+05:30"
     description: A Helm chart for FID Kubernetes deployment
     digest: 73b6177d5dceee71f169b7c94e4039886ca009382bd1a27dc1e7e74c29a8914b
-    home: https://github.com/radiantlogic-devops/helm
     name: fid
     type: application
     urls:
