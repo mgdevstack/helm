@@ -1,0 +1,232 @@
+# Default values for fid.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: radiantone/fid
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+clusterIP: 10.10.0.10
+namespace: default
+
+fid:
+  ## FID root user name
+  ## Default values cn=Directory Manager
+  rootUser: "cn=Directory Manager"
+
+  ## Password for FID root user
+  ##
+  rootPassword: "Welcome1234"
+
+  ## License for FID
+  ##
+  license: "<FID Cluster License>"
+  
+  ## Detach from cluster on termination
+  ##
+  detach: false
+  
+  ## Deploy a readonly sts, that joins an existing FID cluster
+  ##
+  readonly: false
+  
+  migration:
+  ## Migration file that will be imported during first install (export.zip)
+#    url: https://raw.githubusercontent.com/radiantlogic-devops/docker-compose/master/05-monitoring-stack/configs/fid/export.zip
+    url:
+  ## Post migration script to be run after install (configure_fid.sh)
+    script:
+ 
+  ## Deploy a readonly/follower-only sts, that joins current FID cluster
+  ##
+  followerOnly:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 80
+    #targetMemoryUtilizationPercentage: 80
+    ## Detach from cluster on termination
+    detach: true    
+    
+  livenessProbe:
+    initialDelaySeconds: 60
+    timeoutSeconds: 5
+  readinessProbe:
+    initialDelaySeconds: 120
+    timeoutSeconds: 5
+  
+zk:
+  external: true
+  connectionString: "zookeeper:2181"
+  clusterName: "fid-cluster"
+  ruok: "http://zookeeper:8080/commands/ruok"
+  userName: "admin"
+  password: "secret1234"
+
+sysctl:
+  enabled: false
+  
+imagePullSecrets: []
+#imagePullSecrets:
+#- name: regcred
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 7070
+
+ingress:
+  enabled: false
+#  annotations: {}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - "/"
+      
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+#resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+#resources:
+#  limits:
+#    cpu: 4
+#    memory: 8Gi
+#  requests:
+#    cpu: 2
+#    memory: 2Gi
+
+resources:
+  limits:
+    cpu: 1
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+    
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+#  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+## Enable persistence using Persistent Volume Claims
+## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+##
+persistence:
+  enabled: false
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, azure-disk on
+  ##   Azure, standard on GKE, AWS & OpenStack)
+  ##
+  # storageClass: "-"
+  storageClass: "default"
+  accessModes:
+  - ReadWriteOnce
+  size: 10Gi
+  annotations: {}
+
+## Under development
+##
+metrics:
+  enabled: false
+  image: radiantone/fid-exporter
+  imageTag: latest
+  annotations: {}
+  pushMode: true
+  pushGateway: http://prometheus:9091
+  fluentd:
+    enabled: false
+    configFile: /fluentd/etc/fluent.conf
+    elasticSearchHost: elasticsearch
+
+  livenessProbe:
+    initialDelaySeconds: 60
+    timeoutSeconds: 5
+  readinessProbe:
+    initialDelaySeconds: 120
+    timeoutSeconds: 5
+
+# Istio specific settings
+gateway:
+  enabled: false
+  hosts:
+    - chart-example.local
+  http:
+    fid:
+      name: "http-fid"
+      port: 7070
+    admin:
+      name: "http-admin"
+      port: 9100
+    api:
+      name: "http-api"
+      port: 8089
+  https:
+    fid:
+      name: "https-fid"
+      port: 7171
+    admin:
+      name: "https-admin"
+      port: 9101
+    api:
+      name: "https-api"
+      port: 8090
+  ldap:
+    name: "ldap"
+    port: 2389
+  ldaps:
+    name: "ldaps"
+    port: 2636
+

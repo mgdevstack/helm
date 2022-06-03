@@ -1,0 +1,18 @@
+{{- $fullName := include "fid.fullname" . -}}
+{{- $svcPort := .Values.service.port -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-fidui
+spec:
+  rules:
+    - host: "{{.Values.namespace}}.{{ .Values.clusterIP }}.nip.io"
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}-ext
+                port:
+                  number: {{ $svcPort }}

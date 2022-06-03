@@ -1,0 +1,17 @@
+{{- if .Values.zk.external }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "fid.fullname" . }}-test-zk-connection"
+  labels:
+    {{- include "fid.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: zk-ruok
+      image: busybox
+      command: ['wget']
+      args: ['{{ .Values.zk.ruok }}']
+  restartPolicy: Never
+{{- end }}

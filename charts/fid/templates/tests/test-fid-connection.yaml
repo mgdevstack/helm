@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "fid.fullname" . }}-test-fid-connection"
+  labels:
+    {{- include "fid.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: fid
+      image: busybox
+      command: ['nc']
+      args: ['-zv', '{{ include "fid.fullname" . }}', '2389']
+  restartPolicy: Never
